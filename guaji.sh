@@ -146,14 +146,26 @@ create_container() {
 }
 
 # -------------------------
-# 拉取镜像
+# 检查并拉取镜像
+# 仅本地不存在时才拉取
 # -------------------------
 
-echo "正在拉取镜像..."
+pull_if_missing() {
+    local image="$1"
 
-docker pull "$EARNFM_IMAGE"
-docker pull "$TM_IMAGE"
-docker pull "$REPOCKET_IMAGE"
+    if docker image inspect "$image" >/dev/null 2>&1; then
+        echo "镜像已存在，跳过拉取：$image"
+    else
+        echo "本地不存在镜像，开始拉取：$image"
+        docker pull "$image"
+    fi
+}
+
+echo "检查 Docker 镜像..."
+
+pull_if_missing "$EARNFM_IMAGE"
+pull_if_missing "$TM_IMAGE"
+pull_if_missing "$REPOCKET_IMAGE"
 
 # -------------------------
 # EarnFM
