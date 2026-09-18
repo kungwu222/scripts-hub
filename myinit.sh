@@ -16,6 +16,6 @@ curl -fsSL https://raw.githubusercontent.com/kungwu222/scripts-hub/refs/heads/ma
 #------------
 #clear log, setup proxy, setup f2ban
 #------------
-sudo wget -qO- -o- https://raw.githubusercontent.com/ooplastone22/log_clean/refs/heads/main/log_clean.sh | bash
-sudo wget -qO- -o- https://github.com/ooplastone22/sing-box/raw/main/install.sh | bash
+sudo wget -qO- -o- https://raw.githubusercontent.com/ooplastone22/log_clean/refs/heads/main/log_clean.sh | sudo bash
+sudo wget -qO- -o- https://github.com/ooplastone22/sing-box/raw/main/install.sh | sudo bash
 curl -sL https://raw.githubusercontent.com/kungwu222/f2ban/main/install3.sh | sudo bash
