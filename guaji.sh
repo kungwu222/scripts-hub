@@ -18,7 +18,7 @@ fi
 
 EARNFM_TOKEN="4d26575e-8516-42da-aa8b-ccd707b70741"
 
-TM_TOKEN="lv/4uaw0ABHevPYwsDQDE+QLm0biHOGdkHJGFDO8h+Q="
+TM_TOKEN="0AzuB/AnC//4yBTrwUrGmMXX/qaFIg2b8C+47K/P2lU="
 
 RP_EMAIL="firework08@freeyou.eu.org"
 RP_API_KEY="388b7b58-94af-4c05-a1f3-ac651cc868d6"
