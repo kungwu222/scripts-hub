@@ -2,18 +2,18 @@
 set -Eeuo pipefail
 
 # =========================================================
-# VPS 挂机脚本
-# 支持：Debian 11 above、Ubuntu 20.04 above
-# 支持：AMD64/x86_64、ARM64/aarch64
+# VPS guaji script
+# OS support: Debian 11 above、Ubuntu 20.04 above
+# Archi support: AMD64/x86_64、ARM64/aarch64
 # =========================================================
 
 if [[ $EUID -ne 0 ]]; then
-    echo "请使用 root 或 sudo 执行此脚本"
+    echo "Please run script with root or sudo command!"
     exit 1
 fi
 
 # -------------------------
-# 配置区域
+# Configuration
 # -------------------------
 
 TM_TOKEN="0AzuB/AnC//4yBTrwUrGmMXX/qaFIg2b8C+47K/P2lU="
@@ -22,11 +22,11 @@ TM_IMAGE_AMD64="traffmonetizer/cli_v2"
 TM_IMAGE_ARM64="traffmonetizer/cli_v2:arm64v8"
 
 # -------------------------
-# 检查系统版本
+# Check OS version
 # -------------------------
 
 if [[ ! -f /etc/os-release ]]; then
-    echo "无法识别操作系统"
+    echo "unKnown OS!"
     exit 1
 fi
 
@@ -39,29 +39,29 @@ version_ge() {
 case "$ID" in
     debian)
         if ! version_ge "$VERSION_ID" "11"; then
-            echo "不支持的 Debian 版本：$VERSION_ID"
-            echo "要求 Debian 11 或更高版本"
+            echo "Not support Debian version: $VERSION_ID"
+            echo "Require Debian 11 or above!"
             exit 1
         fi
         ;;
     ubuntu)
         if ! version_ge "$VERSION_ID" "20.04"; then
-            echo "不支持的 Ubuntu 版本：$VERSION_ID"
-            echo "要求 Ubuntu 20.04 或更高版本"
+            echo "Not support Ubuntu version: $VERSION_ID"
+            echo "Require Ubuntu 20.04 or above!"
             exit 1
         fi
         ;;
     *)
-        echo "不支持的操作系统：$ID $VERSION_ID"
-        echo "支持 Debian 11+ 和 Ubuntu 20.04+"
+        echo "Not support OS：$ID $VERSION_ID"
+        echo "Only support Debian 11+ or Ubuntu 20.04+ !"
         exit 1
         ;;
 esac
 
-echo "检测到系统：$PRETTY_NAME"
+echo "OS detected: $PRETTY_NAME"
 
 # -------------------------
-# 检查 CPU 架构
+# Check CPU Architecture
 # -------------------------
 
 ARCH="$(uname -m)"
@@ -69,26 +69,26 @@ ARCH="$(uname -m)"
 case "$ARCH" in
     x86_64|amd64)
         TM_IMAGE="$TM_IMAGE_AMD64"
-        echo "CPU 架构：AMD64"
+        echo "CPU Arch: AMD64"
         ;;
     aarch64|arm64)
         TM_IMAGE="$TM_IMAGE_ARM64"
-        echo "CPU 架构：ARM64"
+        echo "CPU Arch: ARM64"
         ;;
     *)
-        echo "不支持的 CPU 架构：$ARCH"
+        echo "Not support CPU Arch: $ARCH"
         exit 1
         ;;
 esac
 
-echo "TraffMonetizer 镜像：$TM_IMAGE"
+echo "TraffMonetizer image: $TM_IMAGE"
 
 # -------------------------
-# 安装 Docker
+# Install Docker
 # -------------------------
 
 install_docker() {
-    echo "正在安装 Docker..."
+    echo "Installing Docker..."
 
     apt-get update
 
@@ -100,25 +100,25 @@ install_docker() {
     systemctl enable docker
     systemctl start docker
 
-    echo "Docker 安装完成"
+    echo "Docker install successful!"
 }
 
 if ! command -v docker >/dev/null 2>&1; then
     install_docker
 else
-    echo "Docker 已安装，跳过安装"
+    echo "Docker has been installed, skipped!"
     systemctl enable docker
     systemctl start docker
 fi
 
 if ! docker info >/dev/null 2>&1; then
-    echo "Docker 服务不可用"
+    echo "Docker service unavailable!"
     exit 1
 fi
 
 # -------------------------
-# 创建容器函数
-# 已存在则删除重建
+# Create container func
+# if the same one existed, delete it and re-create it
 # -------------------------
 
 create_container() {
@@ -126,35 +126,35 @@ create_container() {
     shift
 
     if docker container inspect "$container_name" >/dev/null 2>&1; then
-        echo "发现已有容器：$container_name"
-        echo "停止并删除容器：$container_name"
+        echo "Found the container existed: $container_name"
+        echo "Stop and deleted: $container_name"
 
         docker rm -f "$container_name" >/dev/null
     fi
 
-    echo "创建容器：$container_name"
+    echo "Creating container: $container_name"
     docker run -d "$@" >/dev/null
 
-    echo "容器创建完成：$container_name"
+    echo "Create container done: $container_name"
 }
 
 # -------------------------
-# 检查并拉取镜像
-# 仅本地不存在时才拉取
+# Check and pull image
+# Only pull it if not existed in local
 # -------------------------
 
 pull_if_missing() {
     local image="$1"
 
     if docker image inspect "$image" >/dev/null 2>&1; then
-        echo "镜像已存在，跳过拉取：$image"
+        echo "Image has existed, skip pulling: $image"
     else
-        echo "本地不存在镜像，开始拉取：$image"
+        echo "Image doesn't existed, start pulling: $image"
         docker pull "$image"
     fi
 }
 
-echo "检查 Docker 镜像..."
+echo "checking Docker image..."
 
 pull_if_missing "$TM_IMAGE"
 
@@ -174,7 +174,7 @@ create_container "tm" \
 # -------------------------
 
 if docker container inspect watchtower >/dev/null 2>&1; then
-    echo "Watchtower 已存在，重新创建以确保配置正确"
+    echo "Watchtower has existed, re-creating it..."
 
     docker rm -f watchtower >/dev/null
 fi
@@ -189,15 +189,15 @@ docker run -d \
     earnfm-client tm repocket
 
 # -------------------------
-# 完成
+# Finish
 # -------------------------
 
 echo
 echo "=========================================="
-echo "tm挂机完成"
+echo "tm service done!"
 echo "=========================================="
 echo
-echo "容器状态："
+echo "container status:"
 docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
 echo
-echo "Watchtower：每 24 小时检查镜像更新"
+echo "Watchtower: check image update per 24 hours."
