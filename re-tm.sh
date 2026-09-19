@@ -52,7 +52,7 @@ case "$ID" in
         fi
         ;;
     *)
-        echo "Not support OS：$ID $VERSION_ID"
+        echo "Not support OS: $ID $VERSION_ID"
         echo "Only support Debian 11+ or Ubuntu 20.04+ !"
         exit 1
         ;;
@@ -117,13 +117,29 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 # -------------------------
-# Create container func
-# if the same one existed, delete it and re-create it
+# Create docker container
+# if existed containers using the same image, delete them and re-create it
 # -------------------------
+
+remove_containers_by_image() {
+    local image="$1"
+    local existing_container
+
+    while IFS= read -r existing_container; do
+        if [[ -n "$existing_container" ]]; then
+            echo "Existing Container for image $image: $existing_container"
+            echo "Stop and delete: $existing_container"
+            docker rm -f "$existing_container" >/dev/null
+        fi
+    done < <(docker ps -a --filter "ancestor=$image" --format '{{.Names}}')
+}
 
 create_container() {
     local container_name="$1"
-    shift
+    local image="$2"
+    shift 2
+
+    remove_containers_by_image "$image"
 
     if docker container inspect "$container_name" >/dev/null 2>&1; then
         echo "Found the container existed: $container_name"
@@ -163,6 +179,7 @@ pull_if_missing "$TM_IMAGE"
 # -------------------------
 
 create_container "tm" \
+    "$TM_IMAGE" \
     --restart=always \
     --name tm \
     "$TM_IMAGE" \
