@@ -65,7 +65,7 @@ case "$ID" in
         ;;
 esac
 
-echo "OS detected：$PRETTY_NAME"
+echo "OS detected: $PRETTY_NAME"
 
 # -------------------------
 # Check CPU Architecture
@@ -83,12 +83,12 @@ case "$ARCH" in
         echo "CPU Arch: ARM64"
         ;;
     *)
-        echo "Doesn't support CPU Arch: ：$ARCH"
+        echo "Doesn't support CPU Arch: $ARCH"
         exit 1
         ;;
 esac
 
-echo "TraffMonetizer Image：$TM_IMAGE"
+echo "TraffMonetizer Image: $TM_IMAGE"
 
 # -------------------------
 # Install Docker
@@ -125,12 +125,28 @@ fi
 
 # -------------------------
 # Create docker container
-# if existed the same one, delete it and re-create it
+# if existed containers using the same image, delete them and re-create it
 # -------------------------
+
+remove_containers_by_image() {
+    local image="$1"
+    local existing_container
+
+    while IFS= read -r existing_container; do
+        if [[ -n "$existing_container" ]]; then
+            echo "Existing Container for image $image: $existing_container"
+            echo "Stop and delete: $existing_container"
+            docker rm -f "$existing_container" >/dev/null
+        fi
+    done < <(docker ps -a --filter "ancestor=$image" --format '{{.Names}}')
+}
 
 create_container() {
     local container_name="$1"
-    shift
+    local image="$2"
+    shift 2
+
+    remove_containers_by_image "$image"
 
     if docker container inspect "$container_name" >/dev/null 2>&1; then
         echo "Existing Container: $container_name"
@@ -139,10 +155,10 @@ create_container() {
         docker rm -f "$container_name" >/dev/null
     fi
 
-    echo "Creating container：$container_name"
+    echo "Creating container: $container_name"
     docker run -d "$@" >/dev/null
 
-    echo "Container created：$container_name"
+    echo "Container created: $container_name"
 }
 
 # -------------------------
@@ -172,6 +188,7 @@ pull_if_missing "$REPOCKET_IMAGE"
 # -------------------------
 
 create_container "earnfm-client" \
+    "$EARNFM_IMAGE" \
     --restart=always \
     --name earnfm-client \
     -e "EARNFM_TOKEN=$EARNFM_TOKEN" \
@@ -182,6 +199,7 @@ create_container "earnfm-client" \
 # -------------------------
 
 create_container "tm" \
+    "$TM_IMAGE" \
     --restart=always \
     --name tm \
     "$TM_IMAGE" \
@@ -193,6 +211,7 @@ create_container "tm" \
 # -------------------------
 
 create_container "repocket" \
+    "$REPOCKET_IMAGE" \
     --restart=always \
     --name repocket \
     -e "RP_EMAIL=$RP_EMAIL" \
@@ -227,7 +246,7 @@ echo "=========================================="
 echo "earnfm-client tm repocket services all done!"
 echo "=========================================="
 echo
-echo "Docker container status："
+echo "Docker container status:"
 docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
 echo
-echo "Watchtower：check image update per 24 hours."
+echo "Watchtower: check image update per 24 hours."
