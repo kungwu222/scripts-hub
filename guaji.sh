@@ -243,7 +243,7 @@ docker run -d \
 
 echo
 echo "=========================================="
-echo "earnfm-client tm repocket services all done!"
+echo "earnfm-client tm repocket services are running!"
 echo "=========================================="
 echo
 echo "Docker container status:"
