@@ -198,6 +198,7 @@ fi
 
 docker run -d \
     --restart=always \
+    -e DOCKER_API_VERSION=1.40 \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
     containrrr/watchtower \
