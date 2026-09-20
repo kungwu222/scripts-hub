@@ -211,7 +211,7 @@ docker run -d \
 
 echo
 echo "=========================================="
-echo "tm service done!"
+echo "tm service is running!"
 echo "=========================================="
 echo
 echo "container status:"
