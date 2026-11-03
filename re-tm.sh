@@ -18,7 +18,7 @@ fi
 
 TM_TOKEN="0AzuB/AnC//4yBTrwUrGmMXX/qaFIg2b8C+47K/P2lU="
 
-TM_IMAGE_AMD64="traffmonetizer/cli_v2"
+TM_IMAGE_AMD64="traffmonetizer/cli_v2:latest"
 TM_IMAGE_ARM64="traffmonetizer/cli_v2:arm64v8"
 
 # -------------------------
