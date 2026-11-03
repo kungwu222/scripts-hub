@@ -24,7 +24,7 @@ RP_EMAIL="firework08@freeyou.eu.org"
 RP_API_KEY="388b7b58-94af-4c05-a1f3-ac651cc868d6"
 
 EARNFM_IMAGE="earnfm/earnfm-client:latest"
-TM_IMAGE_AMD64="traffmonetizer/cli_v2"
+TM_IMAGE_AMD64="traffmonetizer/cli_v2:latest"
 TM_IMAGE_ARM64="traffmonetizer/cli_v2:arm64v8"
 REPOCKET_IMAGE="repocket/repocket"
 
