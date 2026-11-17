@@ -16,7 +16,14 @@ fi
 # Configration
 # -------------------------
 
-EARNFM_TOKEN="4d26575e-8516-42da-aa8b-ccd707b70741"
+#Earnfm account:firework08@freeyou.eu.org
+#EARNFM_TOKEN="4d26575e-8516-42da-aa8b-ccd707b70741"
+
+#Earnfm account:swuabc@hotmail.com
+EARNFM_TOKEN="36fc7e1b-e6bc-4a0c-8f4a-c53b02894ceb"
+
+#Earnfm account:ysskuab@outlook.com
+#EARNFM_TOKEN="658faed5-f152-4edc-93b0-dbbdb61c3105"
 
 TM_TOKEN="0AzuB/AnC//4yBTrwUrGmMXX/qaFIg2b8C+47K/P2lU="
 
